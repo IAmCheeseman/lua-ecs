@@ -43,6 +43,10 @@ local function run()
         run_system(system)
     end
 
+    if #ecs.repeating_systems == 0 then
+        return
+    end
+
     while ecs.should_run do
         for _, system in ipairs(ecs.repeating_systems) do
             run_system(system)

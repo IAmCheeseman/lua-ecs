@@ -11,9 +11,9 @@ ecs.new_startup_system("transform", function(ent)
     print(ent.transform.position.x)
 end)
 
-ecs.new_repeating_system("transform", function(ent)
-    print(ent.transform.position.x)
-end)
+-- ecs.new_repeating_system("transform", function(ent)
+--     print(ent.transform.position.x)
+-- end)
 
 ecs.new_entity({ "transform" })
 ecs.new_entity({ "transform" })
