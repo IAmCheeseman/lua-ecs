@@ -64,11 +64,17 @@ local function new_entity(components)
 
     -- We're trying to get a new entity type
     if type(components) == "string" then
+        if not ecs.entity_types[components] then
+            error("`" .. components .. "` is not a valid entity type")
+        end
         components = ecs.entity_types[components]
     end
 
     for _, v in ipairs(components) do
         local component = ecs.components[v]
+        if not component then
+            error("`" .. v .. "` is not a valid component")
+        end
         entity[v] = deep_copy(component)
     end
 
@@ -86,6 +92,11 @@ end
 local function new_startup_system(components, system)
     if type(components) == "string" then
         components = { components }
+    end
+    for _, v in ipairs(components) do
+        if not ecs.components[v] then
+            error("`" .. v .. "` is not a valid component")
+        end
     end
     table.insert(ecs.startup_systems, { system = system, components = components })
 end
