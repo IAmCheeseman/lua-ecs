@@ -1,5 +1,6 @@
 local ecs = require "ecs_data"
 
+--- Stops running the ecs
 local function stop()
     ecs.should_run = false
 end
@@ -10,18 +11,21 @@ local function run_system(system)
     end
 end
 
+--- Runs the startup systems
 local function run_startup()
     for _, system in ipairs(ecs.startup_systems) do
         run_system(system)
     end
 end
 
+--- Runs the repeating systems
 local function run_repeating()
     for _, system in ipairs(ecs.repeating_systems) do
         run_system(system)
     end
 end
 
+--- Runs every system
 local function run_all()
     run_startup()
 
