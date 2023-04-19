@@ -53,7 +53,7 @@ return {
     run_startup = run_startup,
     run_repeating = run_repeating,
     stop = stop,
-    component = require "component",
     entity = require "entity",
+    component = require "component",
     system = require "system",
 }
