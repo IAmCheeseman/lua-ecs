@@ -56,9 +56,7 @@ end
 --- Creates a new entity
 ---@param components table The components
 local function new(components)
-    local entity = {
-        remove = remove_entity,
-    }
+    local entity = {}
 
     for _, v in ipairs(components) do
         local component = ecs.components[v]
@@ -67,6 +65,7 @@ local function new(components)
         end
         entity[v] = ecs.deep_copy(component)
     end
+    entity.remove = remove_entity
 
     add_entity_to_systems(entity)
     table.insert(ecs.entities, entity)
