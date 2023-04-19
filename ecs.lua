@@ -1,5 +1,6 @@
 local ecs = {
     should_run = true,
+    entity_types = {},
     entities = {},
     components = {},
     startup_systems = {},
@@ -61,12 +62,21 @@ end
 local function new_entity(components)
     local entity = {}
 
+    -- We're trying to get a new entity type
+    if type(components) == "string" then
+        components = ecs.entity_types[components]
+    end
+
     for _, v in ipairs(components) do
         local component = ecs.components[v]
         entity[v] = deep_copy(component)
     end
 
     table.insert(ecs.entities, entity)
+end
+
+local function new_entity_type(name, components)
+    ecs.entity_types[name] = components
 end
 
 local function new_component(name, component)
@@ -90,6 +100,7 @@ end
 return {
     run = run,
     stop = stop,
+    new_entity_type = new_entity_type,
     new_entity = new_entity,
     new_component = new_component,
     new_startup_system = new_startup_system,
