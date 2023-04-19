@@ -13,6 +13,8 @@ ecs.new_component("health", {
     max = 100,
 })
 
+ecs.new_component("tag", {})
+
 ecs.new_startup_system({ "transform", "health" }, function(ent)
     local transform = ent.transform
     local health = ent.health
@@ -43,6 +45,11 @@ ecs.new_repeating_system({ "transform", "health" }, function(ent)
     print("hp max: " .. ent.health.max)
 end)
 
+ecs.new_repeating_system({ "transform", "tag" }, function(ent)
+    print("HAAA: ", ent.transform.x)
+end)
+
 ecs.new_entity({ "transform", "health" })
+ecs.new_entity({ "transform", "tag" })
 
 ecs.run()
