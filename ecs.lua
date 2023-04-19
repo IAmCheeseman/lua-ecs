@@ -1,15 +1,12 @@
 local ecs = require "ecs_data"
 
 local function entity_has_components(entity, components)
-    local count = 0
     for _, component in ipairs(components) do
-        for entity_component, _ in pairs(entity) do
-            if entity_component == component then
-                count = count + 1
-            end
+        if not entity[component] then
+            return false
         end
     end
-    return count == #components
+    return true
 end
 
 local function run_system(system)
@@ -51,9 +48,9 @@ end
 return {
     run_all = run_all,
     run_startup = run_startup,
-    run_repeating = run_repeating,
     stop = stop,
     entity = require "entity",
+    run_repeating = run_repeating,
     component = require "component",
     system = require "system",
 }
