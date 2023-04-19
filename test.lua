@@ -8,8 +8,8 @@ ecs.new_component("transform", {
 
 ecs.new_component("player_tag", {})
 
-local player_type = { "player_tag", "transform" }
-ecs.new_entity(player_type)
+local player = { "player_tag", "transform" }
+ecs.new_entity(player)
 
 ecs.new_startup_system("transform", function(ent)
     ent.transform.position.x = math.random(100)
@@ -23,7 +23,7 @@ ecs.new_repeating_system("transform", function(ent)
     end
 end)
 
-ecs.new_repeating_system(player_type, function(ent)
+ecs.new_repeating_system(player, function(ent)
     ent.transform.position.x = ent.transform.position.x + 1
     ent.transform.position.y = ent.transform.position.y + 1
     print(ent.transform.position.x, ent.transform.position.y, ent.transform.rotation)

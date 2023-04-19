@@ -61,10 +61,6 @@ end
 local function new_entity(components)
     local entity = {}
 
-    if type(components) == "string" then
-        components = ecs.entity_types[components]
-    end
-
     for _, v in ipairs(components) do
         local component = ecs.components[v]
         if not component then
