@@ -1,22 +1,4 @@
-local ecs = {
-    should_run = true,
-    entities = {},
-    components = {},
-    startup_systems = {},
-    repeating_systems = {},
-}
-
-local function deep_copy(tab)
-    local copy = {}
-    for k, v in pairs(tab) do
-        if type(v) == "table" then
-            copy[k] = deep_copy(v)
-        else
-            copy[k] = v
-        end
-    end
-    return copy
-end
+local ecs = require "ecs_data"
 
 local function entity_has_components(entity, components)
     local count = 0
@@ -38,19 +20,27 @@ local function run_system(system)
     end
 end
 
-local function run()
+local function run_startup()
     for _, system in ipairs(ecs.startup_systems) do
         run_system(system)
     end
+end
+
+local function run_repeating()
+    for _, system in ipairs(ecs.repeating_systems) do
+        run_system(system)
+    end
+end
+
+local function run_all()
+    run_startup()
 
     if #ecs.repeating_systems == 0 then
         return
     end
 
     while ecs.should_run do
-        for _, system in ipairs(ecs.repeating_systems) do
-            run_system(system)
-        end
+        run_repeating()
     end
 end
 
@@ -58,59 +48,12 @@ local function stop()
     ecs.should_run = false
 end
 
-local function new_entity(components)
-    local entity = {}
-
-    for _, v in ipairs(components) do
-        local component = ecs.components[v]
-        if not component then
-            error("`" .. v .. "` is not a valid component")
-        end
-        entity[v] = deep_copy(component)
-    end
-
-    table.insert(ecs.entities, entity)
-end
-
-local function new_component(name, component)
-    ecs.components[name] = component
-end
-
-local function get_system_components(components)
-    if type(components) == "string" then
-        if ecs.components[components] then
-            return { components }
-        end
-        error("`" .. components .. "` is not a valid component")
-    end
-    return components
-end
-
-local function verify_system_components(components)
-    for _, v in ipairs(components) do
-        if not ecs.components[v] then
-            error("`" .. v .. "` is not a valid component")
-        end
-    end
-end
-
-local function new_startup_system(components, system)
-    components = get_system_components(components)
-    verify_system_components(components)
-    table.insert(ecs.startup_systems, { system = system, components = components })
-end
-
-local function new_repeating_system(components, system)
-    components = get_system_components(components)
-    verify_system_components(components)
-    table.insert(ecs.repeating_systems, { system = system, components = components })
-end
-
 return {
-    run = run,
+    run_all = run_all,
+    run_startup = run_startup,
+    run_repeating = run_repeating,
     stop = stop,
-    new_entity = new_entity,
-    new_component = new_component,
-    new_startup_system = new_startup_system,
-    new_repeating_system = new_repeating_system,
+    component = require "component",
+    entity = require "entity",
+    system = require "system",
 }
