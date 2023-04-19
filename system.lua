@@ -1,5 +1,13 @@
 local ecs = require "ecs_data"
 
+local function add_entities_to_system(system)
+    for _, entity in ipairs(ecs.entities) do
+        if ecs.entity_has_components(entity, system.components) then
+            table.insert(system.entities, entity)
+        end
+    end
+end
+
 local function get_system_components(components)
     if type(components) == "string" then
         if ecs.components[components] then
@@ -21,13 +29,17 @@ end
 local function new_startup_system(components, system)
     components = get_system_components(components)
     verify_system_components(components)
-    table.insert(ecs.startup_systems, { system = system, components = components })
+    local system_table = { system = system, components = components, entities = {} }
+    add_entities_to_system(system_table)
+    table.insert(ecs.startup_systems, system_table)
 end
 
 local function new_repeating_system(components, system)
     components = get_system_components(components)
     verify_system_components(components)
-    table.insert(ecs.repeating_systems, { system = system, components = components })
+    local system_table = { system = system, components = components, entities = {} }
+    add_entities_to_system(system_table)
+    table.insert(ecs.repeating_systems, system_table)
 end
 
 return {

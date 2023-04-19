@@ -10,6 +10,15 @@ local function deep_copy(tab)
     return copy
 end
 
+local function entity_has_components(entity, components)
+    for _, component in ipairs(components) do
+        if not entity[component] then
+            return false
+        end
+    end
+    return true
+end
+
 local ecs = {
     should_run = true,
     entities = {},
@@ -17,6 +26,7 @@ local ecs = {
     startup_systems = {},
     repeating_systems = {},
     deep_copy = deep_copy,
+    entity_has_components = entity_has_components,
 }
 
 return ecs

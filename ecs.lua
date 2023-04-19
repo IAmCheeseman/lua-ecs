@@ -1,20 +1,14 @@
 local ecs = require "ecs_data"
 
-local function entity_has_components(entity, components)
-    for _, component in ipairs(components) do
-        if not entity[component] then
-            return false
-        end
-    end
-    return true
-end
-
 local function run_system(system)
-    for _, entity in pairs(ecs.entities) do
-        if entity_has_components(entity, system.components) then
-            system.system(entity)
-        end
+    for _, entity in ipairs(system.entities) do
+        system.system(entity)
     end
+    -- for _, entity in pairs(ecs.entities) do
+    --     if ecs.entity_has_components(entity, system.components) then
+    --         system.system(entity)
+    --     end
+    -- end
 end
 
 local function run_startup()
