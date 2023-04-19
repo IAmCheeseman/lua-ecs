@@ -1,6 +1,5 @@
 local ecs = {
     should_run = true,
-    entity_types = {},
     entities = {},
     components = {},
     startup_systems = {},
@@ -62,11 +61,7 @@ end
 local function new_entity(components)
     local entity = {}
 
-    -- We're trying to get a new entity type
     if type(components) == "string" then
-        if not ecs.entity_types[components] then
-            error("`" .. components .. "` is not a valid entity type")
-        end
         components = ecs.entity_types[components]
     end
 
@@ -81,10 +76,6 @@ local function new_entity(components)
     table.insert(ecs.entities, entity)
 end
 
-local function new_entity_type(name, components)
-    ecs.entity_types[name] = components
-end
-
 local function new_component(name, component)
     ecs.components[name] = component
 end
@@ -93,11 +84,8 @@ local function get_system_components(components)
     if type(components) == "string" then
         if ecs.components[components] then
             return { components }
-        elseif ecs.entity_types[components] then
-            return ecs.entity_types[components]
-        else
-            error("`" .. components .. "` is not a valid component or entity type")
         end
+        error("`" .. components .. "` is not a valid component")
     end
     return components
 end
@@ -125,7 +113,6 @@ end
 return {
     run = run,
     stop = stop,
-    new_entity_type = new_entity_type,
     new_entity = new_entity,
     new_component = new_component,
     new_startup_system = new_startup_system,
