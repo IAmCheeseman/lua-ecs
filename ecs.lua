@@ -4,11 +4,6 @@ local function run_system(system)
     for _, entity in ipairs(system.entities) do
         system.system(entity)
     end
-    -- for _, entity in pairs(ecs.entities) do
-    --     if ecs.entity_has_components(entity, system.components) then
-    --         system.system(entity)
-    --     end
-    -- end
 end
 
 local function run_startup()

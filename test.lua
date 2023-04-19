@@ -10,7 +10,6 @@ ecs.component.new("player_tag", {})
 
 local player = { "player_tag", "transform" }
 ecs.entity.new(player)
-ecs.entity.new(player)
 
 ecs.system.startup("transform", function(ent)
     ent.transform.position.x = math.random(100)
