@@ -1,5 +1,9 @@
 local ecs = require "ecs_data"
 
+local function stop()
+    ecs.should_run = false
+end
+
 local function run_system(system)
     for _, entity in ipairs(system.entities) do
         system.system(entity)
@@ -27,11 +31,10 @@ local function run_all()
 
     while ecs.should_run do
         run_repeating()
+        if #ecs.entities == 0 then
+            stop()
+        end
     end
-end
-
-local function stop()
-    ecs.should_run = false
 end
 
 return {

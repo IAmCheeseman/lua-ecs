@@ -21,6 +21,7 @@ end
 
 local ecs = {
     should_run = true,
+    entity_set = {},
     entities = {},
     components = {},
     startup_systems = {},

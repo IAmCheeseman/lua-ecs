@@ -27,6 +27,10 @@ ecs.system.repeating(player, function(ent)
     ent.transform.position.x = ent.transform.position.x + 1
     ent.transform.position.y = ent.transform.position.y + 1
     print(ent.transform.position.x, ent.transform.position.y, ent.transform.rotation)
+
+    if ent.transform.position.y > 100 then
+        ent:remove()
+    end
 end)
 
 ecs.run_all()
