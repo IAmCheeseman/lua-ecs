@@ -40,9 +40,9 @@ end
 return {
     run_all = run_all,
     run_startup = run_startup,
+    run_repeating = run_repeating,
     stop = stop,
     entity = require "entity",
-    run_repeating = run_repeating,
     component = require "component",
     system = require "system",
 }

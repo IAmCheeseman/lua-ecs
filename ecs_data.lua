@@ -1,3 +1,6 @@
+--- Performs a deep copy on a table
+---@param tab table The table to copy
+---@return table copy The copied table
 local function deep_copy(tab)
     local copy = {}
     for k, v in pairs(tab) do
@@ -10,6 +13,10 @@ local function deep_copy(tab)
     return copy
 end
 
+--- Checks if an entity has certain components
+---@param entity table The entity to check
+---@param components table The components to check
+---@return boolean has_components If the components exist
 local function entity_has_components(entity, components)
     for _, component in ipairs(components) do
         if not entity[component] then
