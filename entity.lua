@@ -45,7 +45,7 @@ local function new(components)
     for k, v in pairs(components) do
         local overrides = true
         local name = k
-        if type(k) == "number" then
+        if type(k) == "number" then -- We're using an index; there's no properties we want to override
             overrides = false
             name = v
         end
