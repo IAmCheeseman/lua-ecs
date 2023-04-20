@@ -6,7 +6,9 @@ local sparse_set = require "sparse_set"
 ---@param entity table The entity to flush
 local function flush_add(system, entity)
     system.entities:add(entity)
-    system.system(entity)
+    if system.type == "startup" then
+        system.system(entity)
+    end
 end
 
 --- Flushes the remove queue
@@ -14,6 +16,9 @@ end
 ---@param entity table The entity to flush
 local function flush_remove(system, entity)
     system.entities:remove(entity)
+    if system.type == "shutdown" then
+        system.system(entity)
+    end
 end
 
 --- Flushes the queue on a specific system
@@ -74,9 +79,10 @@ end
 ---@param system function The function
 ---@param components table The components
 ---@return table system The system table
-local function create_system(system, components)
+local function create_system(system, type, components)
     local system_table = {
         system = system,
+        type = type,
         components = components,
         entities = sparse_set.new(),
         queues = {
@@ -94,7 +100,7 @@ end
 local function new_startup_system(components, system)
     components = get_system_components(components)
     verify_system_components(components)
-    local system_table = create_system(system, components)
+    local system_table = create_system(system, "startup", components)
     table.insert(ecs.startup_systems, system_table)
 end
 
@@ -104,12 +110,23 @@ end
 local function new_repeating_system(components, system)
     components = get_system_components(components)
     verify_system_components(components)
-    local system_table = create_system(system, components)
+    local system_table = create_system(system, "repeating", components)
     table.insert(ecs.repeating_systems, system_table)
+end
+
+--- Create a new repeating system; one that runs every frame
+---@param components string|table The components needed for this system to run
+---@param system function The function to run on the components
+local function new_shutdown_system(components, system)
+    components = get_system_components(components)
+    verify_system_components(components)
+    local system_table = create_system(system, "shutdown", components)
+    table.insert(ecs.shutdown_systems, system_table)
 end
 
 return {
     startup = new_startup_system,
     repeating = new_repeating_system,
+    shutdown = new_shutdown_system,
     flush_queues = flush_queues,
 }

@@ -14,8 +14,7 @@ end
 --- Removes the entity
 ---@param entity table The entity
 local function remove_entity(entity)
-    remove_entity_from_systems(ecs.startup_systems, entity)
-    remove_entity_from_systems(ecs.repeating_systems, entity)
+    ecs:run_on_all_systems(remove_entity_from_systems, { entity })
 
     table.insert(ecs.queues.remove, entity)
 end
@@ -35,8 +34,7 @@ end
 --- Adds the entity to systems
 ---@param entity table The entity
 local function add_entity_to_systems(entity)
-    add_entity_to_system(ecs.startup_systems, entity)
-    add_entity_to_system(ecs.repeating_systems, entity)
+    ecs:run_on_all_systems(add_entity_to_system, { entity })
 end
 
 --- Creates a new entity

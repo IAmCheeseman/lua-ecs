@@ -28,18 +28,26 @@ local function entity_has_components(entity, components)
     return true
 end
 
+local function run_on_all_systems(self, func, args)
+    func(self.startup_systems, table.unpack(args))
+    func(self.repeating_systems, table.unpack(args))
+    func(self.shutdown_systems, table.unpack(args))
+end
+
 local ecs = {
     should_run = true,
     entities = sparse_set.new(),
     components = {},
     startup_systems = {},
     repeating_systems = {},
+    shutdown_systems = {},
     queues = {
         add = {},
         remove = {},
     },
     deep_copy = deep_copy,
     entity_has_components = entity_has_components,
+    run_on_all_systems = run_on_all_systems,
 }
 
 return ecs
