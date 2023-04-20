@@ -42,12 +42,25 @@ end
 local function new(components)
     local entity = {}
 
-    for _, v in ipairs(components) do
-        local component = ecs.components[v]
-        if not component then
-            error("`" .. v .. "` is not a valid component")
+    for k, v in pairs(components) do
+        local overrides = true
+        local name = k
+        if type(k) == "number" then
+            overrides = false
+            name = v
         end
-        entity[v] = ecs.deep_copy(component)
+
+        local component = ecs.components[name]
+        if not component then
+            error("`" .. name .. "` is not a valid component")
+        end
+        entity[name] = ecs.deep_copy(component)
+
+        if overrides then
+            for property, override in pairs(v) do
+                entity[name][property] = override
+            end
+        end
     end
     entity.remove = remove_entity
 
