@@ -34,6 +34,10 @@ local ecs = {
     components = {},
     startup_systems = {},
     repeating_systems = {},
+    queues = {
+        add = {},
+        remove = {},
+    },
     deep_copy = deep_copy,
     entity_has_components = entity_has_components,
 }

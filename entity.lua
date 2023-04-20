@@ -17,7 +17,7 @@ local function remove_entity(entity)
     remove_entity_from_systems(ecs.startup_systems, entity)
     remove_entity_from_systems(ecs.repeating_systems, entity)
 
-    ecs.entities:remove(entity)
+    table.insert(ecs.queues.remove, entity)
 end
 
 
@@ -54,7 +54,7 @@ local function new(components)
     entity.remove = remove_entity
 
     add_entity_to_systems(entity)
-    ecs.entities:add(entity)
+    table.insert(ecs.queues.add, entity)
     return entity
 end
 
