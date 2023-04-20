@@ -11,13 +11,6 @@ local function run_system(system)
     end
 end
 
---- Runs the startup systems
-local function run_startup()
-    for _, system in ipairs(ecs.startup_systems) do
-        run_system(system)
-    end
-end
-
 --- Runs the repeating systems
 local function run_repeating()
     for _, system in ipairs(ecs.repeating_systems) do
@@ -27,8 +20,6 @@ end
 
 --- Runs every system
 local function run_all()
-    run_startup()
-
     if #ecs.repeating_systems == 0 then
         return
     end

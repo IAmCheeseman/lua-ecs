@@ -34,14 +34,19 @@ local function remove_entity(entity)
     ecs.entity_set[entity] = nil
 end
 
+
 --- Add an entity to a system
 ---@param systems table `ecs.startup_systems` or `ecs.repeating_systems`
 ---@param entity table The entity
-local function add_entity_to_system(systems, entity)
+---@param call boolean Call the system right away
+local function add_entity_to_system(systems, entity, call)
     for _, system in ipairs(systems) do
         if ecs.entity_has_components(entity, system.components) then
             table.insert(system.entities, entity)
             system.entity_set[entity] = #system.entities
+            if call then
+                system.system(entity)
+            end
         end
     end
 end
@@ -49,8 +54,8 @@ end
 --- Adds the entity to systems
 ---@param entity table The entity
 local function add_entity_to_systems(entity)
-    add_entity_to_system(ecs.startup_systems, entity)
-    add_entity_to_system(ecs.repeating_systems, entity)
+    add_entity_to_system(ecs.startup_systems, entity, true)
+    add_entity_to_system(ecs.repeating_systems, entity, false)
 end
 
 --- Creates a new entity
