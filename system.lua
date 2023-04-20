@@ -1,5 +1,5 @@
 local ecs = require "ecs_data"
-local set = require "set"
+local sparse_set = require "sparse_set"
 
 local function flush_add(system, entity)
     system.entities:add(entity)
@@ -66,7 +66,7 @@ local function create_system(system, components)
     local system_table = {
         system = system,
         components = components,
-        entities = set.new(),
+        entities = sparse_set.new(),
         queues = {
             add = {},
             remove = {},

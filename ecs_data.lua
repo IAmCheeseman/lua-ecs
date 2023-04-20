@@ -1,4 +1,4 @@
-local set = require "set"
+local sparse_set = require "sparse_set"
 
 --- Performs a deep copy on a table
 ---@param tab table The table to copy
@@ -30,7 +30,7 @@ end
 
 local ecs = {
     should_run = true,
-    entities = set.new(),
+    entities = sparse_set.new(),
     components = {},
     startup_systems = {},
     repeating_systems = {},
