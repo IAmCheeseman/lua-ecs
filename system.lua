@@ -1,15 +1,25 @@
 local ecs = require "ecs_data"
 local sparse_set = require "sparse_set"
 
+--- Flushes the add queue
+---@param system table The system to flush on
+---@param entity table The entity to flush
 local function flush_add(system, entity)
     system.entities:add(entity)
     system.system(entity)
 end
 
+--- Flushes the remove queue
+---@param system table The system to flush on
+---@param entity table The entity to flush
 local function flush_remove(system, entity)
     system.entities:remove(entity)
 end
 
+--- Flushes the queue on a specific system
+---@param system table The system
+---@param queue table The specific queue
+---@param flush function The function to flush with
 local function flush_queue(system, queue, flush)
     for i = #queue, 1, -1 do
         local entity = queue[i]
@@ -18,6 +28,8 @@ local function flush_queue(system, queue, flush)
     end
 end
 
+--- Flushes the queues, adds and removes all entities in their respective queues
+---@param systems table The systems to flush
 local function flush_queues(systems)
     for _, system in ipairs(systems) do
         flush_queue(system, system.queues.add, flush_add)
