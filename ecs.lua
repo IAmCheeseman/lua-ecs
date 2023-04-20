@@ -34,8 +34,6 @@ end
 
 return {
     run_all = run_all,
-    run_startup = run_startup,
-    run_repeating = run_repeating,
     stop = stop,
     entity = require "entity",
     component = require "component",
