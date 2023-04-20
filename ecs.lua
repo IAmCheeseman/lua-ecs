@@ -32,6 +32,7 @@ local function run()
         -- Flushing system queues
         flush_queues(ecs.startup_systems)
         flush_queues(ecs.repeating_systems)
+        
         -- Flushing global queues
         for i = #ecs.queues.add, 1, -1 do
             local entity = ecs.queues.add[i]
