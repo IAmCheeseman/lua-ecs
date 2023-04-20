@@ -1,3 +1,5 @@
+local set = require "set"
+
 --- Performs a deep copy on a table
 ---@param tab table The table to copy
 ---@return table copy The copied table
@@ -28,8 +30,7 @@ end
 
 local ecs = {
     should_run = true,
-    entity_set = {},
-    entities = {},
+    entities = set.new(),
     components = {},
     startup_systems = {},
     repeating_systems = {},

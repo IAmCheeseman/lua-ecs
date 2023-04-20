@@ -1,12 +1,36 @@
 local ecs = require "ecs_data"
+local set = require "set"
+
+local function flush_add(system, entity)
+    system.entities:add(entity)
+    system.system(entity)
+end
+
+local function flush_remove(system, entity)
+    system.entities:remove(entity)
+end
+
+local function flush_queue(system, queue, flush)
+    for i = #queue, 1, -1 do
+        local entity = queue[i]
+        flush(system, entity)
+        table.remove(queue, i)
+    end
+end
+
+local function flush_queues(systems)
+    for _, system in ipairs(systems) do
+        flush_queue(system, system.queues.add, flush_add)
+        flush_queue(system, system.queues.remove, flush_remove)
+    end
+end
 
 --- Adds the correct entities to a system
 ---@param system table The system to entities to.
 local function add_entities_to_system(system)
     for _, entity in ipairs(ecs.entities) do
         if ecs.entity_has_components(entity, system.components) then
-            table.insert(system.entities, entity)
-            system.entity_set[entity] = #system.entities
+            table.insert(system.queues.add, entity)
         end
     end
 end
@@ -39,7 +63,15 @@ end
 ---@param components table The components
 ---@return table system The system table
 local function create_system(system, components)
-    local system_table = { system = system, components = components, entity_set = {}, entities = {} }
+    local system_table = {
+        system = system,
+        components = components,
+        entities = set.new(),
+        queues = {
+            add = {},
+            remove = {},
+        },
+    }
     add_entities_to_system(system_table)
     return system_table
 end
@@ -67,4 +99,5 @@ end
 return {
     startup = new_startup_system,
     repeating = new_repeating_system,
+    flush_queues = flush_queues,
 }

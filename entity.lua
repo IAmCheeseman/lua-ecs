@@ -5,15 +5,8 @@ local ecs = require "ecs_data"
 ---@param entity table The entity
 local function remove_entity_from_systems(systems, entity)
     for _, system in ipairs(systems) do
-        local index = system.entity_set[entity]
-        if index then
-            local new_entity = system.entities[#system.entities]
-            -- Swapping
-            system.entities[index] = new_entity
-            system.entity_set[new_entity] = index
-            -- Removing
-            table.remove(system.entities, #system.entities)
-            system.entity_set[entity] = nil
+        if system.entities:has(entity) then
+            table.insert(system.queues.remove, entity)
         end
     end
 end
@@ -24,29 +17,17 @@ local function remove_entity(entity)
     remove_entity_from_systems(ecs.startup_systems, entity)
     remove_entity_from_systems(ecs.repeating_systems, entity)
 
-    local index = ecs.entity_set[entity]
-    local new_entity = ecs.entities[#ecs.entities]
-    -- Swapping
-    ecs.entities[index] = new_entity
-    ecs.entity_set[new_entity] = index
-    -- Removing
-    table.remove(ecs.entities, #ecs.entities)
-    ecs.entity_set[entity] = nil
+    ecs.entities:remove(entity)
 end
 
 
 --- Add an entity to a system
 ---@param systems table `ecs.startup_systems` or `ecs.repeating_systems`
 ---@param entity table The entity
----@param call boolean Call the system right away
-local function add_entity_to_system(systems, entity, call)
+local function add_entity_to_system(systems, entity)
     for _, system in ipairs(systems) do
         if ecs.entity_has_components(entity, system.components) then
-            table.insert(system.entities, entity)
-            system.entity_set[entity] = #system.entities
-            if call then
-                system.system(entity)
-            end
+            table.insert(system.queues.add, entity)
         end
     end
 end
@@ -54,8 +35,8 @@ end
 --- Adds the entity to systems
 ---@param entity table The entity
 local function add_entity_to_systems(entity)
-    add_entity_to_system(ecs.startup_systems, entity, true)
-    add_entity_to_system(ecs.repeating_systems, entity, false)
+    add_entity_to_system(ecs.startup_systems, entity)
+    add_entity_to_system(ecs.repeating_systems, entity)
 end
 
 --- Creates a new entity
@@ -73,8 +54,8 @@ local function new(components)
     entity.remove = remove_entity
 
     add_entity_to_systems(entity)
-    table.insert(ecs.entities, entity)
-    ecs.entity_set[entity] = #ecs.entities
+    ecs.entities:add(entity)
+    return entity
 end
 
 return {
