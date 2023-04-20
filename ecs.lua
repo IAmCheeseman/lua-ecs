@@ -11,21 +11,16 @@ local function run_system(system)
     end
 end
 
---- Runs the repeating systems
-local function run_repeating()
-    for _, system in ipairs(ecs.repeating_systems) do
-        run_system(system)
-    end
-end
-
 --- Runs every system
-local function run_all()
+local function run()
     if #ecs.repeating_systems == 0 then
         return
     end
 
     while ecs.should_run do
-        run_repeating()
+        for _, system in ipairs(ecs.repeating_systems) do
+            run_system(system)
+        end
         if #ecs.entities == 0 then
             stop()
         end
@@ -33,7 +28,7 @@ local function run_all()
 end
 
 return {
-    run_all = run_all,
+    run = run,
     stop = stop,
     entity = require "entity",
     component = require "component",
