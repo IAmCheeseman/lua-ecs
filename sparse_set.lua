@@ -43,6 +43,12 @@ local function iterate(self)
     return ipairs(self.dense)
 end
 
+local mt = {
+    __index = get,
+    __len = function(t)
+        return #t.dense
+    end
+}
 --- Creates a new sparse set
 ---@return table sparse_set The sparse set
 local function new()
@@ -54,12 +60,7 @@ local function new()
         remove = remove,
         has = has,
         iterate = iterate,
-    }, {
-        __index = get,
-        __len = function(t)
-            return #t.dense
-        end
-    })
+    }, mt)
 end
 
 return {
